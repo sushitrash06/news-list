@@ -6,6 +6,14 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import CardTopHeadline from "../molecules/top-headlines";
 
+const SkeletonTopHeadline: React.FC = () => (
+  <div className="p-4 animate-pulse">
+    <div className="h-56 bg-gray-300 rounded-md"></div>
+    <div className="mt-4 h-6 bg-gray-300 rounded-md w-3/4"></div>
+    <div className="mt-2 h-4 bg-gray-300 rounded-md w-1/2"></div>
+  </div>
+);
+
 const NewsComponent: React.FC = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +36,18 @@ const NewsComponent: React.FC = () => {
     loadArticles();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="max-w-[850px]">
+        <Slider>
+          {[1, 2, 3].map((_, index) => (
+            <SkeletonTopHeadline key={index} />
+          ))}
+        </Slider>
+      </div>
+    );
+  }
+
   if (error) return <div>{error}</div>;
 
   const settings = {

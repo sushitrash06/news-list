@@ -1,11 +1,18 @@
-import { fetchTopHeadlines, fetchTopHeadlinesCategory } from "@/pages/server";
+import { fetchTopHeadlinesCategory } from "@/pages/server";
 import { NewsArticle } from "@/pages/type";
 import React, { useEffect, useState } from "react";
-import CardArticle from "../molecules/article-card";
+import CardTopHeadline from "../molecules/top-headlines";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import CardTopHeadline from "../molecules/top-headlines";
+
+const SkeletonHeadline: React.FC = () => (
+  <div className="p-4 animate-pulse">
+    <div className="h-48 bg-gray-300 rounded-md"></div>
+    <div className="mt-4 h-6 bg-gray-300 rounded-md w-3/4"></div>
+    <div className="mt-2 h-4 bg-gray-300 rounded-md w-1/2"></div>
+  </div>
+);
 
 const EntertainmentNews: React.FC = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -29,9 +36,6 @@ const EntertainmentNews: React.FC = () => {
     loadArticles();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
   const settings = {
     dots: false,
     infinite: true,
@@ -43,6 +47,22 @@ const EntertainmentNews: React.FC = () => {
     pauseOnHover: true,
     fade: true,
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-[650px]">
+        <h1 className="text-4xl my-5">Entertainment</h1>
+        <Slider {...settings}>
+          {[1, 2, 3, 4].map((_, index) => (
+            <SkeletonHeadline key={index} />
+          ))}
+        </Slider>
+      </div>
+    );
+  }
+
+  if (error) return <div>{error}</div>;
+
   return (
     <div className="max-w-[650px]">
       <h1 className="text-4xl my-5">Entertainment</h1>

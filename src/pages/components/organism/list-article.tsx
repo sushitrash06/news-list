@@ -7,6 +7,14 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import CardListArticle from "../molecules/list-article";
 
+const SkeletonArticle: React.FC = () => (
+  <div className="my-5 animate-pulse">
+    <div className="h-48 bg-gray-300 rounded-md"></div>
+    <div className="mt-4 h-6 bg-gray-300 rounded-md w-3/4"></div>
+    <div className="mt-2 h-4 bg-gray-300 rounded-md w-1/2"></div>
+  </div>
+);
+
 const ListArticle: React.FC = () => {
   const router = useRouter();
   const newPath = router.pathname.replace("/", "");
@@ -33,10 +41,23 @@ const ListArticle: React.FC = () => {
     loadArticles();
   }, [newPath]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="max-w-[850px] mx-auto">
+        <h1 className="text-4xl my-5 mx-2 capitalize">
+          {newPath.replace("-", " ")}
+        </h1>
+        <section className="gap-4">
+          {[1, 2, 3, 4].map((_, index) => (
+            <SkeletonArticle key={index} />
+          ))}
+        </section>
+      </div>
+    );
+  }
+
   if (error) return <div>{error}</div>;
 
-  console.log(newPath, "ini");
   return (
     <div className="max-w-[850px] mx-auto">
       <h1 className="text-4xl my-5 mx-2 capitalize">
@@ -44,9 +65,8 @@ const ListArticle: React.FC = () => {
       </h1>
       <section className="gap-4">
         {articles?.map((article, index) => (
-          <div className="my-5">
+          <div className="my-5" key={index}>
             <CardListArticle
-              key={index}
               description={article.description ?? ""}
               imageUrl={article.urlToImage ?? ""}
               publishedAt={article.publishedAt ?? ""}
